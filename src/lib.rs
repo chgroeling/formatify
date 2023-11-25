@@ -106,9 +106,9 @@ macro_rules! skip_until_neg_char_match {
     };
 }
 
-pub struct StringFormatter;
+pub struct Formatify;
 
-impl StringFormatter {
+impl Formatify {
     pub fn new() -> Self {
         Self
     }
@@ -262,10 +262,10 @@ impl StringFormatter {
     /// # Examples
     /// ```
     /// use std::collections::HashMap;
-    /// use formatify::StringFormatter;
+    /// use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
-    /// let formatter = StringFormatter::new();
+    /// let formatter = Formatify::new();
     /// let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)!");
     /// assert_eq!(formatted_string, "Hello, Alice!");
     /// ```
@@ -293,10 +293,10 @@ impl StringFormatter {
     /// # Examples
     /// ```
     /// use std::collections::HashMap;
-    /// use formatify::StringFormatter;
+    /// use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
-    /// let formatter = StringFormatter::new();
+    /// let formatter = Formatify::new();
     /// let segment_lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
     /// assert_eq!(segment_lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
     /// ```
@@ -324,10 +324,10 @@ impl StringFormatter {
     /// # Examples
     /// ```
     /// use std::collections::HashMap;
-    /// use formatify::StringFormatter;
+    /// use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
-    /// let formatter = StringFormatter::new();
+    /// let formatter = Formatify::new();
     /// let placeholder_keys = formatter.extract_placeholder_keys(&key_value, "Hello, %(name)! Today is %(day).");
     /// assert_eq!(placeholder_keys, vec!["name"]);
     /// ```
@@ -344,7 +344,7 @@ impl StringFormatter {
 mod tests_extract_placeholder_keys {
     use std::collections::HashMap;
 
-    use crate::StringFormatter;
+    use crate::Formatify;
 
     macro_rules! test {
         ($test_name:ident, $inp:expr, $expected_output:expr) => {
@@ -358,7 +358,7 @@ mod tests_extract_placeholder_keys {
                 key_value.insert("str14", "1234567890ABCD".into());
                 key_value.insert("umlaute", "äöü".into());
                 key_value.insert("umlaute_bigger", "äöü12345678".into());
-                let parser = StringFormatter::new();
+                let parser = Formatify::new();
                 let out_str = parser.extract_placeholder_keys(&key_value, $inp);
                 assert_eq!(out_str, $expected_output);
             }
@@ -412,7 +412,7 @@ mod tests_extract_placeholder_keys {
 mod tests_measure_lengths {
     use std::collections::HashMap;
 
-    use crate::StringFormatter;
+    use crate::Formatify;
 
     macro_rules! test {
         ($test_name:ident, $inp:expr, $expected_output:expr) => {
@@ -426,7 +426,7 @@ mod tests_measure_lengths {
                 key_value.insert("str14", "1234567890ABCD".into());
                 key_value.insert("umlaute", "äöü".into());
                 key_value.insert("umlaute_bigger", "äöü12345678".into());
-                let parser = StringFormatter::new();
+                let parser = Formatify::new();
                 let out_str = parser.measure_lengths(&key_value, $inp);
                 assert_eq!(out_str, $expected_output);
             }
@@ -509,7 +509,7 @@ mod tests_measure_lengths {
 
 #[cfg(test)]
 mod tests_replace_placeholders {
-    use crate::StringFormatter;
+    use crate::Formatify;
     use std::collections::HashMap;
 
     macro_rules! test {
@@ -524,7 +524,7 @@ mod tests_replace_placeholders {
                 key_value.insert("str14", "1234567890ABCD".into());
                 key_value.insert("umlaute", "äöü".into());
                 key_value.insert("umlaute_bigger", "äöü12345678".into());
-                let parser = StringFormatter::new();
+                let parser = Formatify::new();
                 let out_str = parser.replace_placeholders(&key_value, $inp);
                 assert_eq!(out_str, $expected_output);
             }
