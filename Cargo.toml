@@ -1,6 +1,6 @@
 [package]
 name = "formatify"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "formatify: A rust library specializing in dynamic runtime string formatting, ideal for applications requiring adaptable text representation."
 authors = ["Christian Gröling <contact@christiangroeling.de>"]

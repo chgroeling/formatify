@@ -310,11 +310,15 @@ impl Formatify {
 
     /// Replaces placeholders in the input string with corresponding values from a HashMap.
     ///
-    /// This method scans the input string (`inp`) for placeholders, identified by a specific
-    /// syntax (e.g., "%(var1)"), and replaces them with corresponding values from the
-    /// `key_value` HashMap. The replacement process is versatile, accommodating various placeholder
-    /// formats, including those requiring left alignment and truncation. It's ideal for dynamically
-    /// generating strings where placeholders are replaced by context-specific values.
+    /// This method scans the input string `inp` for placeholders, identified by a specific
+    /// syntax, and replaces them with corresponding values from the `key_value` HashMap. The function
+    /// supports various types of placeholders, including simple variable substitution, left alignment,
+    /// and optional truncation.
+    ///
+    /// # Placeholder Formats
+    /// - **Simple Variable Substitution**: `%(key)`. Replaces this placeholder with the value associated with `key` in the `key_value` HashMap.
+    /// - **Left Alignment**: `%<(width)`. Aligns the following placeholder to the left within a field of `width` characters.
+    /// - **Left Alignment with Truncation**: `%<(width,trunc)`. Same as left alignment, but truncates the value to fit within the specified `width`.
     ///
     /// # Arguments
     /// * `key_value` - A reference to a HashMap where keys correspond to placeholder identifiers in the input string and values are their replacements.
@@ -330,17 +334,23 @@ impl Formatify {
     /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
+    /// key_value.insert("date", "Monday".into());
     /// let formatter = Formatify::new();
-    /// let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)!");
-    /// assert_eq!(formatted_string, "Hello, Alice!");
+    /// let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)! Today is %<(10)%(date).");
+    /// assert_eq!(formatted_string, "Hello, Alice! Today is Monday    .");
     /// ```
+    ///
+    /// This function is essential for dynamic string formatting in the Formatify library. It allows users
+    /// to create template strings with various types of placeholders, which can be filled with different values at runtime.
+    /// This is particularly useful for generating customized messages, dynamic user interfaces, or any other text-based content
+    /// that needs to be generated or modified based on changing data.
     pub fn replace_placeholders(&self, key_value: &HashMap<&str, String>, inp: &str) -> String {
         self.parse_generic::<ParsingTaskReplacePlaceholders>(key_value, inp)
     }
 
     /// Measures the length of the entire string and the lengths of valid placeholders within it.
     ///
-    /// This method processes the input string (`inp`), which is analyzed as if it were to be formatted.
+    /// This method processes the input string `inp`, which is analyzed as if it were to be formatted.
     /// Instead of replacing the placeholders, it calculates the overall length of the string with
     /// placeholders hypothetically replaced, followed by the lengths of each valid placeholder. This
     /// is particularly useful for layout planning and understanding the impact of placeholders on the
@@ -371,9 +381,9 @@ impl Formatify {
 
     /// Extracts and lists all valid placeholder keys from a given string.
     ///
-    /// This method analyzes the input string (`inp`) to identify and collect the keys of all
+    /// This method analyzes the input string `inp` to identify and collect the keys of all
     /// placeholders defined within it. Placeholders are identified by a specific syntax, typically
-    /// denoted by "%(key)". This function is particularly useful for determining which placeholders
+    /// denoted by `%(key)`. This function is particularly useful for determining which placeholders
     /// are used in a string without modifying the string itself. It helps in preparing or validating
     /// the necessary keys in a key-value map for subsequent processing, like formatting or replacing
     /// placeholders.
