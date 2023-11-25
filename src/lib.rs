@@ -1,3 +1,8 @@
+//! Formatify is a rust library designed for dynamic string formatting. It offers flexible
+//! and powerful tools for parsing strings with placeholders and replacing them with
+//! corresponding values. The library's key feature is its ability to handle various placeholder
+//! formats and alignment options.
+
 mod output_format;
 mod parsing_context;
 mod parsing_task;
@@ -106,6 +111,66 @@ macro_rules! skip_until_neg_char_match {
     };
 }
 
+/// `Formatify` is a struct in the formatify library, a versatile string formatting tool in Rust.
+/// It provides methods for replacing placeholders in a string with values from a `HashMap`,
+/// measuring the lengths of strings with placeholders, and extracting placeholder keys from a string.
+/// This struct is the core of the library, enabling users to perform various string formatting tasks
+/// efficiently. With methods like `replace_placeholders`, `measure_lengths`, and `extract_placeholder_keys`,
+/// Formatify simplifies the process of dynamic string manipulation, catering to use cases where
+/// template-based string formatting is essential.
+///
+/// ## Usage
+///
+/// Import the necessary modules and use `Formatify` for string formatting tasks:
+///
+/// ```rust
+/// use formatify::Formatify;
+/// use std::collections::HashMap;
+/// ```
+///
+/// ## Features
+///
+/// 1. **Placeholder Replacement**: Replace placeholders in strings with values from a `HashMap`.
+/// 2. **Length Measurement**: Measure lengths of strings and placeholders.
+/// 3. **Placeholder Extraction**: Extract placeholder keys from a string.
+///
+/// ## Examples
+///
+/// ### Replacing Placeholders
+///
+/// ```rust
+/// # use formatify::Formatify;
+/// # use std::collections::HashMap;
+/// let mut key_value: HashMap<&str, String> = HashMap::new();
+/// key_value.insert("name", "Alice".into());
+/// let formatter = Formatify::new();
+/// let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)!");
+/// assert_eq!(formatted_string, "Hello, Alice!");
+/// ```
+///
+/// ### Measuring Lengths
+///
+/// ```rust
+/// # use formatify::Formatify;
+/// # use std::collections::HashMap;
+/// let mut key_value: HashMap<&str, String> = HashMap::new();
+/// key_value.insert("name", "Alice".into());
+/// let formatter = Formatify::new();
+/// let segment_lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
+/// assert_eq!(segment_lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
+/// ```
+///
+/// ### Extracting Placeholder Keys
+///
+/// ```rust
+/// # use formatify::Formatify;
+/// # use std::collections::HashMap;
+/// let mut key_value: HashMap<&str, String> = HashMap::new();
+/// key_value.insert("name", "Alice".into());
+/// let formatter = Formatify::new();
+/// let placeholder_keys = formatter.extract_placeholder_keys(&key_value, "Hello, %(name)! Today is %(day).");
+/// assert_eq!(placeholder_keys, vec!["name"]);
+/// ```
 pub struct Formatify;
 
 impl Formatify {
@@ -261,8 +326,8 @@ impl Formatify {
     ///
     /// # Examples
     /// ```
-    /// use std::collections::HashMap;
-    /// use formatify::Formatify;
+    /// # use std::collections::HashMap;
+    /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
@@ -292,8 +357,8 @@ impl Formatify {
     ///
     /// # Examples
     /// ```
-    /// use std::collections::HashMap;
-    /// use formatify::Formatify;
+    /// # use std::collections::HashMap;
+    /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
@@ -323,8 +388,8 @@ impl Formatify {
     ///
     /// # Examples
     /// ```
-    /// use std::collections::HashMap;
-    /// use formatify::Formatify;
+    /// # use std::collections::HashMap;
+    /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
