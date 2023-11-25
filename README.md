@@ -2,6 +2,8 @@
 
 Formatify is a rust library designed for dynamic string formatting. It offers flexible and powerful tools for parsing strings with placeholders and replacing them with corresponding values. The library's key feature is its ability to handle various placeholder formats and alignment options.
 
+See the [documentation](https://docs.rs/formatify) for more.
+
 ## Usage
 
 Import the necessary modules and use `Formatify` for string formatting tasks:
