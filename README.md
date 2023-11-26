@@ -1,54 +1,46 @@
-# Formatify
+# Formatify: Dynamic String Formatting Library for Rust
 
-Formatify is a rust library designed for dynamic string formatting. It offers flexible and powerful tools for parsing strings with placeholders and replacing them with corresponding values. The library's key feature is its ability to handle various placeholder formats and alignment options.
+Formatify is a Rust library tailored for flexible string formatting. It takes inspiration from Git's commit log formatting system (see [here](https://git-scm.com/docs/pretty-formats)). This library provides robust tools to parse strings containing placeholders and replace them with appropriate values. It's an excellent choice for applications needing dynamic text representations.
 
-See the [documentation](https://docs.rs/formatify) for more.
+Explore more in our [documentation](https://docs.rs/formatify).
 
-## Usage
+## Key Features
 
-Import the necessary modules and use `Formatify` for string formatting tasks:
+- **Dynamic String Formatting:** Simplify your coding by replacing placeholders in strings with matching values from a HashMap.
+- **Alignment Varieties:** Manage various text alignments like left alignment, and easily handle text truncation.
+- **String and Placeholder Lengths:** Efficiently measure the lengths of both strings and individual placeholders.
+- **Extracting Placeholders:** Quickly identify and extract all the placeholder keys present in a string.
+
+## How to Use Formatify
+
+To get started with Formatify, here's a simple example:
 
 ```rust
 use formatify::Formatify;
 use std::collections::HashMap;
-```
 
-## Features
-
-1. **Placeholder Replacement**: Replace placeholders in strings with values from a `HashMap`.
-2. **Length Measurement**: Measure lengths of strings and placeholders.
-3. **Placeholder Extraction**: Extract placeholder keys from a string.
-
-## Examples
-
-### Replacing Placeholders
-
-```rust
-let mut key_value: HashMap<&str, String> = HashMap::new();
-key_value.insert("name", "Alice".into());
+let mut key_value_pairs = HashMap::new();
+key_value_pairs.insert("name", "Alice".into());
 let formatter = Formatify::new();
-let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)!");
+let formatted_string = formatter.replace_placeholders(&key_value_pairs, "Hello, %(name)!");
 assert_eq!(formatted_string, "Hello, Alice!");
 ```
 
-### Measuring Lengths
+In this example, we create a HashMap with key-value pairs, initialize Formatify, and replace the placeholder `%(name)` with the corresponding value from the HashMap.
 
-```rust
-let segment_lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
-assert_eq!(segment_lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
-```
+## Library Methods
 
-### Extracting Placeholder Keys
+Formatify includes several helpful methods:
+- `replace_placeholders`: Substitutes placeholders in a string with their corresponding values from a HashMap.
+- `measure_lengths`: Calculates the length of a string and the lengths of each placeholder it contains.
+- `extract_placeholder_keys`: Identifies and lists all the placeholders in a string.
 
-```rust
-let placeholder_keys = formatter.extract_placeholder_keys(&key_value, "Hello, %(name)! Today is %(day).");
-assert_eq!(placeholder_keys, vec!["name"]);
-```
+For detailed information on these methods, check out our [module documentation](https://docs.rs/formatify).
 
-## Testing
+## Easy Integration
 
-The library includes comprehensive tests for each functionality, ensuring reliability and correctness.
+Formatify is built to integrate smoothly into your existing Rust projects. It is compatible with standard Rust data types and collection frameworks.
 
-## Conclusion
+## Contributing
 
-Formatify offers a versatile solution for dynamic string formatting in Rust, suitable for various applications requiring template-based string manipulation.
+Contributions are welcome! For bug reports, feature requests, or general feedback, please open an issue on the repository's issue tracker.

@@ -1,7 +1,64 @@
-//! Formatify is a rust library designed for dynamic string formatting. It offers flexible
-//! and powerful tools for parsing strings with placeholders and replacing them with
-//! corresponding values. The library's key feature is its ability to handle various placeholder
-//! formats and alignment options.
+//! # Formatify: Dynamic String Formatting Library
+//!
+//! Formatify is a Rust library designed for dynamic string formatting. It provides flexible and powerful
+//! tools for parsing strings with placeholders, similar to how Git formats commit logs (see [Git pretty format](https://git-scm.com/docs/pretty-formats)),
+//! and replacing them with corresponding values. The library excels in handling various placeholder
+//! formats and alignment options, ideal for applications requiring adaptable text representation.
+//!
+//! ## Placeholder Formats
+//!
+//! Formatify supports several types of placeholders, enabling a wide range of formatting options.
+//! Placeholders are defined within a string using a specific syntax, typically denoted by `%(key)`.
+//! The library processes these placeholders and replaces them with corresponding values at runtime.
+//!
+//! ### Supported Placeholder Types:
+//!
+//! 1. **Single-Character Placeholders**:
+//!    - **New Line (`%n`)**: Inserts a newline character where `%n` is placed.
+//!    - **Percentage (`%%`)**: Escapes and inserts a literal percent sign.
+//!
+//! 2. **Variable Substitution**:
+//!    - **Syntax**: `%(key)`
+//!    - **Description**: Replaces this placeholder with the value associated with `key` in the `key_value` HashMap.
+//!
+//! 3. **Format Placeholders**:
+//!    - **Left Alignment**:
+//!        - **Syntax**: `%<(width)`
+//!        - **Description**: Aligns the subsequent placeholder to the left within a field of `width` characters. The placeholder itself is not displayed.
+//!    - **Left Alignment with Truncation**:
+//!        - **Syntax**: `%<(width,trunc)`
+//!        - **Description**: Similar to left alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!
+//! Note: In the context of format placeholders, `width` refers to the total number of characters allocated for the value being formatted. For example, `%<(10)` aligns the value within a 10-character wide field.
+//!
+//! ### Example Usage:
+//!
+//! ```rust
+//! # use formatify::Formatify;
+//! # use std::collections::HashMap;
+//! let mut key_value = HashMap::new();
+//! key_value.insert("name", "Alice".into());
+//! let formatter = Formatify::new();
+//! let formatted_string = formatter.replace_placeholders(&key_value, "Hello, %(name)!");
+//! assert_eq!(formatted_string, "Hello, Alice!");
+//! ```
+//!
+//! ## Public Methods
+//!
+//! Public methods utilizing these placeholders include:
+//! - `replace_placeholders`: Replaces placeholders in a string with values from a HashMap.
+//! - `measure_lengths`: Calculates the length of strings and placeholders.
+//! - `extract_placeholder_keys`: Extracts and lists all valid placeholder keys from a string.
+//!
+//! For more details on these methods and their usage, refer to the respective method documentation in this module.
+//!
+//! ## Integration and Compatibility
+//!
+//! Formatify is designed to be easily integrated into existing Rust projects and works seamlessly with standard data types and collections.
+//!
+//! ## Contribution and Feedback
+//!
+//! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue on the repository's issue tracker.
 
 mod output_format;
 mod parsing_context;
@@ -111,13 +168,13 @@ macro_rules! skip_until_neg_char_match {
     };
 }
 
-/// `Formatify` is a struct in the formatify library, a versatile string formatting tool in Rust.
-/// It provides methods for replacing placeholders in a string with values from a `HashMap`,
-/// measuring the lengths of strings with placeholders, and extracting placeholder keys from a string.
-/// This struct is the core of the library, enabling users to perform various string formatting tasks
-/// efficiently. With methods like `replace_placeholders`, `measure_lengths`, and `extract_placeholder_keys`,
-/// Formatify simplifies the process of dynamic string manipulation, catering to use cases where
-/// template-based string formatting is essential.
+/// `Formatify`: Main struct for dynamic string formatting.
+///
+/// This struct is part of the `formatify` library, offering tools to parse strings with
+/// placeholders and replace them with values from a `HashMap`. It handles various placeholder
+/// formats and alignment options, suitable for adaptive text representation in diverse applications.
+/// Key functionalities include replacing placeholders, measuring string lengths with placeholders,
+/// and extracting placeholder keys.
 ///
 /// ## Usage
 ///
@@ -156,8 +213,8 @@ macro_rules! skip_until_neg_char_match {
 /// let mut key_value: HashMap<&str, String> = HashMap::new();
 /// key_value.insert("name", "Alice".into());
 /// let formatter = Formatify::new();
-/// let segment_lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
-/// assert_eq!(segment_lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
+/// let lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
+/// assert_eq!(lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
 /// ```
 ///
 /// ### Extracting Placeholder Keys
@@ -312,13 +369,10 @@ impl Formatify {
     ///
     /// This method scans the input string `inp` for placeholders, identified by a specific
     /// syntax, and replaces them with corresponding values from the `key_value` HashMap. The function
-    /// supports various types of placeholders, including simple variable substitution, left alignment,
+    /// supports various types of placeholders, including simple variable substitution, alignment,
     /// and optional truncation.
     ///
-    /// # Placeholder Formats
-    /// - **Simple Variable Substitution**: `%(key)`. Replaces this placeholder with the value associated with `key` in the `key_value` HashMap.
-    /// - **Left Alignment**: `%<(width)`. Aligns the following placeholder to the left within a field of `width` characters.
-    /// - **Left Alignment with Truncation**: `%<(width,trunc)`. Same as left alignment, but truncates the value to fit within the specified `width`.
+    /// For detailed information on supported placeholders, see [Supported Placeholder Types](#supported-placeholder-types).
     ///
     /// # Arguments
     /// * `key_value` - A reference to a HashMap where keys correspond to placeholder identifiers in the input string and values are their replacements.
@@ -356,6 +410,8 @@ impl Formatify {
     /// is particularly useful for layout planning and understanding the impact of placeholders on the
     /// total length of the string.
     ///
+    /// For detailed information on supported placeholders, see [Supported Placeholder Types](#supported-placeholder-types).
+    ///
     /// # Arguments
     /// * `key_value` - A reference to a HashMap containing key-value pairs. The keys represent placeholders in the input string, and the values are their potential replacements.
     /// * `inp` - The input string with placeholders to be measured.
@@ -372,8 +428,8 @@ impl Formatify {
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
-    /// let segment_lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
-    /// assert_eq!(segment_lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
+    /// let lengths = formatter.measure_lengths(&key_value, "Hello, %(name)! This is a test.");
+    /// assert_eq!(lengths, vec![29, 5]); // Total length with "Alice" as the placeholder, length of "Alice"
     /// ```
     pub fn measure_lengths(&self, key_value: &HashMap<&str, String>, inp: &str) -> Vec<usize> {
         self.parse_generic::<ParsingTaskMeasureLengths>(key_value, inp)
@@ -387,14 +443,16 @@ impl Formatify {
     /// are used in a string without modifying the string itself. It helps in preparing or validating
     /// the necessary keys in a key-value map for subsequent processing, like formatting or replacing
     /// placeholders.
+    ///  
+    /// For detailed information on supported placeholders, see [Supported Placeholder Types](#supported-placeholder-types).
     ///
     /// # Arguments
     /// * `key_value` - A reference to a HashMap containing key-value pairs. These pairs may be used within the placeholder syntax in the input string.
     /// * `inp` - The input string to be analyzed for placeholder keys.
     ///
     /// # Returns
-    /// A `Vec<String>` containing all distinct placeholder keys found in the input string. If no
-    /// placeholders are found, an empty vector is returned.
+    /// A `Vec<String>` containing all valid placeholder keys found in the input string. If no
+    /// valid placeholders are found, an empty vector is returned.
     ///
     /// # Examples
     /// ```
