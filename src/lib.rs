@@ -221,12 +221,9 @@ macro_rules! skip_until_neg_char_match {
 ///
 /// ```rust
 /// # use formatify::Formatify;
-/// # use std::collections::HashMap;
-/// let mut key_value: HashMap<&str, String> = HashMap::new();
-/// key_value.insert("name", "Alice".into());
 /// let formatter = Formatify::new();
-/// let placeholder_keys = formatter.extract_placeholder_keys(&key_value, "Hello, %(name)! Today is %(day).");
-/// assert_eq!(placeholder_keys, vec!["name"]);
+/// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
+/// assert_eq!(placeholder_keys, vec!["name", "day"]);
 /// ```
 pub struct Formatify;
 
@@ -435,7 +432,7 @@ impl Formatify {
         self.parse_generic::<ParsingTaskMeasureLengths>(key_value, inp)
     }
 
-    /// Extracts and lists all valid placeholder keys from a given string.
+    /// Extracts and lists all placeholder keys from a given string.
     ///
     /// This method analyzes the input string `inp` to identify and collect the keys of all
     /// placeholders defined within it. Placeholders are identified by a specific syntax, typically
@@ -447,52 +444,35 @@ impl Formatify {
     /// For detailed information on supported placeholders, see [Supported Placeholder Types](#supported-placeholder-types).
     ///
     /// # Arguments
-    /// * `key_value` - A reference to a HashMap containing key-value pairs. These pairs may be used within the placeholder syntax in the input string.
     /// * `inp` - The input string to be analyzed for placeholder keys.
     ///
     /// # Returns
-    /// A `Vec<String>` containing all valid placeholder keys found in the input string. If no
+    /// A `Vec<String>` containing all placeholder keys found in the input string. If no
     /// valid placeholders are found, an empty vector is returned.
     ///
     /// # Examples
     /// ```
-    /// # use std::collections::HashMap;
     /// # use formatify::Formatify;
-    /// let mut key_value : HashMap<&str, String> = HashMap::new();
-    /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
-    /// let placeholder_keys = formatter.extract_placeholder_keys(&key_value, "Hello, %(name)! Today is %(day).");
-    /// assert_eq!(placeholder_keys, vec!["name"]);
+    /// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
+    /// assert_eq!(placeholder_keys, vec!["name", "day"]);
     /// ```
-    pub fn extract_placeholder_keys(
-        &self,
-        key_value: &HashMap<&str, String>,
-        inp: &str,
-    ) -> Vec<String> {
-        self.parse_generic::<ParsingTaskExtractPlaceholderKeys>(key_value, inp)
+    pub fn extract_placeholder_keys(&self, inp: &str) -> Vec<String> {
+        let key_value = HashMap::<&str, String>::new();
+        self.parse_generic::<ParsingTaskExtractPlaceholderKeys>(&key_value, inp)
     }
 }
 
 #[cfg(test)]
 mod tests_extract_placeholder_keys {
-    use std::collections::HashMap;
-
     use crate::Formatify;
 
     macro_rules! test {
         ($test_name:ident, $inp:expr, $expected_output:expr) => {
             #[test]
             fn $test_name() {
-                let mut key_value = HashMap::<&str, String>::new();
-                key_value.insert("var1", "world".into());
-                key_value.insert("var2", "welt".into());
-                key_value.insert("str4", "1234".into());
-                key_value.insert("str10", "1234567890".into());
-                key_value.insert("str14", "1234567890ABCD".into());
-                key_value.insert("umlaute", "äöü".into());
-                key_value.insert("umlaute_bigger", "äöü12345678".into());
                 let parser = Formatify::new();
-                let out_str = parser.extract_placeholder_keys(&key_value, $inp);
+                let out_str = parser.extract_placeholder_keys($inp);
                 assert_eq!(out_str, $expected_output);
             }
         };
@@ -531,7 +511,7 @@ mod tests_extract_placeholder_keys {
     test!(
         test_with_undefined_second_placeholder_returns_two_placeholders,
         "Hallo %(var1)%(vara)",
-        vec!["var1"]
+        vec!["var1", "vara"]
     );
 
     test!(

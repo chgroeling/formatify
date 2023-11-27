@@ -32,10 +32,6 @@ impl ParsingTask for ParsingTaskExtractPlaceholderKeys {
     fn process_char_placeholder(_context: &mut ParsingContext<'_, Self::Item>, _ch: char) {}
 
     fn process_str_placeholder(context: &mut ParsingContext<'_, Self::Item>, arg: String) {
-        let Some(_) = context.key_value.get(arg.as_str()) else {
-            Self::error(context);
-            return;
-        };
         context.vout.push(arg);
     }
 
