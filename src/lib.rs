@@ -439,7 +439,7 @@ impl Formatify {
     /// denoted by `%(key)`. This function is particularly useful for determining which placeholders
     /// are used in a string without modifying the string itself. It helps in preparing or validating
     /// the necessary keys in a key-value map for subsequent processing, like formatting or replacing
-    /// placeholders.
+    /// placeholders. Single char and formatting placeholders are ignored by this function.
     ///  
     /// For detailed information on supported placeholders, see [Supported Placeholder Types](#supported-placeholder-types).
     ///
