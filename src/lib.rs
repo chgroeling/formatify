@@ -28,6 +28,10 @@
 //!    - **Left Alignment with Truncation**:
 //!        - **Syntax**: `%<(width,trunc)`
 //!        - **Description**: Similar to left alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!    - **Right Alignment**:
+//!        - **Syntax**: `%>(width)`
+//!        - **Description**: Aligns the subsequent placeholder to the right within a field of `width` characters. The placeholder itself is not displayed.
+
 //!
 //! Note: In the context of format placeholders, `width` refers to the total number of characters allocated for the value being formatted. For example, `%<(10)` aligns the value within a 10-character wide field.
 //!
@@ -312,6 +316,50 @@ impl Formatify {
         }
     }
 
+    fn process_format_right_placeholder<T: ParsingTask>(
+        &self,
+        context: &mut ParsingContext<'_, T::Item>,
+    ) {
+        if consume_expected_chars!(context, '(').is_none() {
+            T::error(context);
+            return;
+        }
+        skip_until_neg_char_match!(context, ' '); // consume whitespaces
+
+        let Some(decimal) = self.parse_decimal_number(context) else {
+            T::error(context);
+            return;
+        };
+
+        skip_until_neg_char_match!(context, ' '); // consume whitespaces
+
+        // Check if optional arguments are available
+        /*  if consume_expected_chars!(context, ',').is_some() {
+            skip_until_neg_char_match!(context, ' '); // consume whitespaces
+            let Some(literal) = gather_str_placeholder!(context) else {
+                T::error(context);
+                return;
+            };
+            skip_until_neg_char_match!(context, ' '); // consume whitespaces
+            context.iter.next(); // consume )
+            let arg: String = literal.into_iter().collect();
+
+            if arg.trim() == "trunc" {
+                context.format = OutputFormat::LeftAlignTrunc(decimal);
+                return;
+            }
+
+            T::error(context);
+        } else {*/
+        if consume_expected_chars!(context, ')').is_none() {
+            T::error(context);
+            return;
+        }
+
+        context.format = OutputFormat::RightAlign(decimal);
+        //  }
+    }
+
     fn process_placeholder<T: ParsingTask>(&self, context: &mut ParsingContext<'_, T::Item>) {
         let Some(ch) = context.iter.next() else {
             return;
@@ -323,6 +371,9 @@ impl Formatify {
             }
             '<' => {
                 self.process_format_left_placeholder::<T>(context);
+            }
+            '>' => {
+                self.process_format_right_placeholder::<T>(context);
             }
             'n' => {
                 T::process_char_placeholder(context, '\n');
@@ -590,6 +641,12 @@ mod tests_measure_lengths {
     );
 
     test!(
+        test_with_right_alignment_placeholder_and_shorter_returns_correct_length,
+        "Hallo %>(10)%(str4)xx",
+        vec![18usize, 10usize]
+    );
+
+    test!(
         test_with_left_alignment_placeholder_and_exact_length_value_returns_correct_length,
         "Hallo %<(10)%(str10)xx", // "Hallo 1234567890xx"
         vec![18usize, 10usize]
@@ -737,14 +794,32 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_right_alignment_placeholder_and_shorter_value_pads_correctly,
+        "Hallo %>(10)%(str4)xx",
+        "Hallo       1234xx"
+    );
+
+    test!(
         test_with_left_alignment_placeholder_and_exact_length_value_keeps_it_unchanged,
         "Hallo %<(10)%(str10)xx",
         "Hallo 1234567890xx"
     );
 
     test!(
+        test_with_right_alignment_placeholder_and_exact_length_value_keeps_it_unchanged,
+        "Hallo %>(10)%(str10)xx",
+        "Hallo 1234567890xx"
+    );
+
+    test!(
         test_with_left_alignment_placeholder_and_longer_value_keeps_it_unchanged,
         "Hallo %<(10)%(str14)xx",
+        "Hallo 1234567890ABCDxx"
+    );
+
+    test!(
+        test_with_right_alignment_placeholder_and_longer_value_keeps_it_unchanged,
+        "Hallo %>(10)%(str14)xx",
         "Hallo 1234567890ABCDxx"
     );
 

@@ -58,6 +58,11 @@ impl ParsingTask for ParsingTaskMeasureLengths {
                 context.vout[0] += repl_c;
                 context.vout.push(repl_c);
             }
+            OutputFormat::RightAlign(ra) => {
+                let repl_c_max = max(repl_c, ra as usize);
+                context.vout[0] += repl_c_max;
+                context.vout.push(repl_c_max);
+            }
         }
     }
 

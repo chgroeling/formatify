@@ -44,6 +44,10 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
         };
         let repl = repl_str.chars();
         match context.format {
+            OutputFormat::None => {
+                context.vout.extend(repl);
+            }
+
             OutputFormat::LeftAlign(la) => {
                 context.vout.extend(repl.clone());
                 let value_len = repl.into_iter().count();
@@ -82,7 +86,15 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
                     }
                 }
             }
-            _ => {
+
+            OutputFormat::RightAlign(ra) => {
+                let value_len = repl.clone().into_iter().count();
+                let len_diff = (ra as i32) - (value_len as i32);
+                if len_diff > 0 {
+                    for _i in 0..len_diff {
+                        context.vout.push(' ');
+                    }
+                }
                 context.vout.extend(repl);
             }
         }
