@@ -58,11 +58,13 @@
 //!
 //! ## Integration and Compatibility
 //!
-//! Formatify is designed to be easily integrated into existing Rust projects and works seamlessly with standard data types and collections.
+//! Formatify is designed to be easily integrated into existing Rust projects and works seamlessly with standard data
+//! types and collections.
 //!
 //! ## Contribution and Feedback
 //!
-//! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue on the repository's issue tracker.
+//! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue
+//! on the repository's issue tracker.
 
 mod output_format;
 mod parsing_context;
