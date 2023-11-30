@@ -82,6 +82,7 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
                         context.vout.push('…');
                     }
                     _ => {
+                        // len_diff ==0
                         context.vout.extend(repl);
                     }
                 }
@@ -96,6 +97,35 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
                     }
                 }
                 context.vout.extend(repl);
+            }
+
+            OutputFormat::RightAlignTrunc(ra) => {
+                let value_len = repl.clone().count();
+                let len_diff = (ra as i32) - (value_len as i32);
+
+                match len_diff {
+                    _ if len_diff > 0 => {
+                        for _i in 0..len_diff {
+                            context.vout.push(' ');
+                        }
+                        context.vout.extend(repl);
+                    }
+
+                    _ if len_diff < 0 => {
+                        let let_cmp = (value_len as i32) + len_diff - 1;
+                        for (idx, ch) in repl.into_iter().enumerate() {
+                            if idx >= let_cmp as usize {
+                                break;
+                            }
+                            context.vout.push(ch);
+                        }
+                        context.vout.push('…');
+                    }
+                    _ => {
+                        // len_diff ==0
+                        context.vout.extend(repl);
+                    }
+                }
             }
         }
     }

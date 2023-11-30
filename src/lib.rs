@@ -336,7 +336,7 @@ impl Formatify {
         skip_until_neg_char_match!(context, ' '); // consume whitespaces
 
         // Check if optional arguments are available
-        /*  if consume_expected_chars!(context, ',').is_some() {
+        if consume_expected_chars!(context, ',').is_some() {
             skip_until_neg_char_match!(context, ' '); // consume whitespaces
             let Some(literal) = gather_str_placeholder!(context) else {
                 T::error(context);
@@ -347,19 +347,19 @@ impl Formatify {
             let arg: String = literal.into_iter().collect();
 
             if arg.trim() == "trunc" {
-                context.format = OutputFormat::LeftAlignTrunc(decimal);
+                context.format = OutputFormat::RightAlignTrunc(decimal);
                 return;
             }
 
             T::error(context);
-        } else {*/
-        if consume_expected_chars!(context, ')').is_none() {
-            T::error(context);
-            return;
-        }
+        } else {
+            if consume_expected_chars!(context, ')').is_none() {
+                T::error(context);
+                return;
+            }
 
-        context.format = OutputFormat::RightAlign(decimal);
-        //  }
+            context.format = OutputFormat::RightAlign(decimal);
+        }
     }
 
     fn process_placeholder<T: ParsingTask>(&self, context: &mut ParsingContext<'_, T::Item>) {
@@ -661,9 +661,27 @@ mod tests_measure_lengths {
     );
 
     test!(
+        test_with_right_alignment_placeholder_and_exact_length_value_returns_correct_length,
+        "Hallo %>(10)%(str10)xx", // "Hallo 1234567890xx"
+        vec![18usize, 10usize]
+    );
+
+    test!(
         test_with_left_alignment_placeholder_and_longer_value_returns_correct_length,
         "Hallo %<(10)%(str14)xx", // "Hallo 1234567890ABCDxx"
         vec![22usize, 14usize]
+    );
+
+    test!(
+        test_with_right_alignment_placeholder_and_longer_value_returns_correct_length,
+        "Hallo %>(10)%(str14)xx", // "Hallo 1234567890ABCDxx"
+        vec![22usize, 14usize]
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_shorter_value_with_umlauts_returns_correct_length,
+        "Hallo %>(10,trunc)%(umlaute)xx", // "Hallo äöü       xx"
+        vec![18usize, 10usize]
     );
 
     test!(
@@ -681,6 +699,12 @@ mod tests_measure_lengths {
     test!(
         test_with_left_align_truncate_placeholder_and_longer_value_returns_correct_length,
         "Hallo %<(10,trunc)%(str14)xx", // "Hallo 123456789…xx"
+        vec![18usize, 10usize]
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_longer_value_returns_correct_length,
+        "Hallo %>(10,trunc)%(str14)xx", // "Hallo 123456789…xx"
         vec![18usize, 10usize]
     );
 }
@@ -844,15 +868,33 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_right_align_truncate_placeholder_and_exact_length_value_keeps_it_unchanged,
+        "Hallo %>(10,trunc)%(str10)xx",
+        "Hallo 1234567890xx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_exact_length_value_with_spaces_keeps_it_unchanged,
         "Hallo %<(  10  ,  trunc   )%(str10)xx",
         "Hallo 1234567890xx"
     );
 
     test!(
+        test_with_right_align_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %>(10,trunc)%(str14)xx",
+        "Hallo 123456789…xx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_longer_value_truncates_correctly,
         "Hallo %<(10,trunc)%(str14)xx",
         "Hallo 123456789…xx"
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %>(10,trunc)%(umlaute)xx",
+        "Hallo        äöüxx"
     );
 
     test!(
