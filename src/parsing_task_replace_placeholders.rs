@@ -89,7 +89,7 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
             }
 
             OutputFormat::RightAlign(ra) => {
-                let value_len = repl.clone().into_iter().count();
+                let value_len = repl.clone().count();
                 let len_diff = (ra as i32) - (value_len as i32);
                 if len_diff > 0 {
                     for _i in 0..len_diff {
