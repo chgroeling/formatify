@@ -16,8 +16,7 @@ impl ParsingTask for ParsingTaskMeasureLengths {
         key_value: &'a HashMap<&'a str, String>,
     ) -> ParsingContext<'a, Self::Item> {
         let vec: Vec<_> = inp.chars().collect();
-        let mut vout = Vec::<usize>::new();
-        vout.push(0);
+        let vout = vec![0];
         ParsingContext::<'_, Self::Item> {
             key_value,
             iter: PeekCharIterator::new(vec),
