@@ -41,7 +41,7 @@
 //! ### Example Usage:
 //!
 //! ```rust
-//! # use formatify::Formatify;
+//! # use formatify::{Formatify, FormatifyFormatter};
 //! # use std::collections::HashMap;
 //! let mut key_value = HashMap::new();
 //! key_value.insert("name", "Alice".into());
@@ -192,7 +192,7 @@ macro_rules! skip_until_neg_char_match {
 /// Import the necessary modules and use `Formatify` for string formatting tasks:
 ///
 /// ```rust
-/// use formatify::Formatify;
+/// use formatify::{Formatify, FormatifyFormatter};
 /// use std::collections::HashMap;
 /// ```
 ///
@@ -207,7 +207,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Replacing Placeholders
 ///
 /// ```rust
-/// # use formatify::Formatify;
+/// # use formatify::{Formatify, FormatifyFormatter};
 /// # use std::collections::HashMap;
 /// let mut key_value: HashMap<&str, String> = HashMap::new();
 /// key_value.insert("name", "Alice".into());
@@ -219,7 +219,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Measuring Lengths
 ///
 /// ```rust
-/// # use formatify::Formatify;
+/// # use formatify::{Formatify, FormatifyFormatter};
 /// # use std::collections::HashMap;
 /// let mut key_value: HashMap<&str, String> = HashMap::new();
 /// key_value.insert("name", "Alice".into());
@@ -231,7 +231,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Extracting Placeholder Keys
 ///
 /// ```rust
-/// # use formatify::Formatify;
+/// # use formatify::{Formatify, FormatifyFormatter};
 /// let formatter = Formatify::new();
 /// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
 /// assert_eq!(placeholder_keys, vec!["name", "day"]);

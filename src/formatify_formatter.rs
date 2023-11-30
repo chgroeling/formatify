@@ -21,8 +21,8 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
+    /// # use formatify::{Formatify, FormatifyFormatter};
     /// # use std::collections::HashMap;
-    /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// key_value.insert("date", "Monday".into());
@@ -58,8 +58,8 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
+    /// # use formatify::{Formatify, FormatifyFormatter};
     /// # use std::collections::HashMap;
-    /// # use formatify::Formatify;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
     /// let formatter = Formatify::new();
@@ -88,7 +88,7 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
-    /// # use formatify::Formatify;
+    /// # use formatify::{Formatify, FormatifyFormatter};
     /// let formatter = Formatify::new();
     /// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
     /// assert_eq!(placeholder_keys, vec!["name", "day"]);
