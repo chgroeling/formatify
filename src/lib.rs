@@ -41,7 +41,7 @@
 //! ### Example Usage:
 //!
 //! ```rust
-//! # use formatify::{Formatify, FormatifyFormatter};
+//! # use formatify::{Formatify, PlaceholderFormatter};
 //! # use std::collections::HashMap;
 //! let mut key_value = HashMap::new();
 //! key_value.insert("name", "Alice".into());
@@ -69,7 +69,6 @@
 //! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue
 //! on the repository's issue tracker.
 
-mod formatify_formatter;
 mod output_format;
 mod parsing_context;
 mod parsing_task;
@@ -77,14 +76,15 @@ mod parsing_task_extract_placeholder_keys;
 mod parsing_task_measure_lengths;
 mod parsing_task_replace_placeholders;
 mod peek_char_iterator;
+mod placeholder_formatter;
 
-pub use self::formatify_formatter::FormatifyFormatter;
 use self::output_format::OutputFormat;
 use self::parsing_context::ParsingContext;
 use self::parsing_task::ParsingTask;
 use self::parsing_task_extract_placeholder_keys::ParsingTaskExtractPlaceholderKeys;
 use self::parsing_task_measure_lengths::ParsingTaskMeasureLengths;
 use self::parsing_task_replace_placeholders::ParsingTaskReplacePlaceholders;
+pub use self::placeholder_formatter::PlaceholderFormatter;
 use std::collections::HashMap;
 
 /// `consume_expected_chars` checks and consumes the next char in the iterator if it matches the provided pattern(s).
@@ -192,7 +192,7 @@ macro_rules! skip_until_neg_char_match {
 /// Import the necessary modules and use `Formatify` for string formatting tasks:
 ///
 /// ```rust
-/// use formatify::{Formatify, FormatifyFormatter};
+/// use formatify::{Formatify, PlaceholderFormatter};
 /// use std::collections::HashMap;
 /// ```
 ///
@@ -207,7 +207,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Replacing Placeholders
 ///
 /// ```rust
-/// # use formatify::{Formatify, FormatifyFormatter};
+/// # use formatify::{Formatify, PlaceholderFormatter};
 /// # use std::collections::HashMap;
 /// let mut key_value: HashMap<&str, String> = HashMap::new();
 /// key_value.insert("name", "Alice".into());
@@ -219,7 +219,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Measuring Lengths
 ///
 /// ```rust
-/// # use formatify::{Formatify, FormatifyFormatter};
+/// # use formatify::{Formatify, PlaceholderFormatter};
 /// # use std::collections::HashMap;
 /// let mut key_value: HashMap<&str, String> = HashMap::new();
 /// key_value.insert("name", "Alice".into());
@@ -231,7 +231,7 @@ macro_rules! skip_until_neg_char_match {
 /// ### Extracting Placeholder Keys
 ///
 /// ```rust
-/// # use formatify::{Formatify, FormatifyFormatter};
+/// # use formatify::{Formatify, PlaceholderFormatter};
 /// let formatter = Formatify::new();
 /// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
 /// assert_eq!(placeholder_keys, vec!["name", "day"]);
@@ -421,7 +421,7 @@ impl Formatify {
     }
 }
 
-impl FormatifyFormatter for Formatify {
+impl PlaceholderFormatter for Formatify {
     fn replace_placeholders(&self, key_value: &HashMap<&str, String>, inp: &str) -> String {
         self.parse_generic::<ParsingTaskReplacePlaceholders>(key_value, inp)
     }

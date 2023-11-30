@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 /// Trait used to abstract Formatify from a system.
-pub trait FormatifyFormatter {
+pub trait PlaceholderFormatter {
     /// Replaces placeholders in the input string with corresponding values from a HashMap.
     ///
     /// This method scans the input string `inp` for placeholders, identified by a specific
@@ -21,7 +21,7 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
-    /// # use formatify::{Formatify, FormatifyFormatter};
+    /// # use formatify::{Formatify, PlaceholderFormatter};
     /// # use std::collections::HashMap;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
@@ -58,7 +58,7 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
-    /// # use formatify::{Formatify, FormatifyFormatter};
+    /// # use formatify::{Formatify, PlaceholderFormatter};
     /// # use std::collections::HashMap;
     /// let mut key_value : HashMap<&str, String> = HashMap::new();
     /// key_value.insert("name", "Alice".into());
@@ -88,7 +88,7 @@ pub trait FormatifyFormatter {
     ///
     /// # Examples
     /// ```
-    /// # use formatify::{Formatify, FormatifyFormatter};
+    /// # use formatify::{Formatify, PlaceholderFormatter};
     /// let formatter = Formatify::new();
     /// let placeholder_keys = formatter.extract_placeholder_keys("Hello, %(name)! Today is %(day).");
     /// assert_eq!(placeholder_keys, vec!["name", "day"]);
