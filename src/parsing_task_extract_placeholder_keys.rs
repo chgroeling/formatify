@@ -20,7 +20,7 @@ impl ParsingTask for ParsingTaskExtractPlaceholderKeys {
         ParsingContext::<'_, Self::Item> {
             key_value,
             iter: PeekCharIterator::new(vec),
-            vout: vout,
+            vout,
             format: OutputFormat::None,
         }
     }
