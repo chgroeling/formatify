@@ -34,7 +34,9 @@ impl ParsingTask for ParsingTaskMeasureLengths {
         context.vout[0] += 1;
     }
 
-    fn process_char_placeholder(_context: &mut ParsingContext<'_, Self::Item>, _ch: char) {}
+    fn process_char_placeholder(context: &mut ParsingContext<'_, Self::Item>, _ch: char) {
+        context.vout[0] += 1;
+    }
 
     fn process_str_placeholder(context: &mut ParsingContext<'_, Self::Item>, arg: String) {
         let Some(repl_str) = context.key_value.get(arg.as_str()) else {

@@ -620,8 +620,14 @@ mod tests_measure_lengths {
 
     test!(
         test_with_invalid_token_type_counts_length_of_unreplaced_string,
-        "Hallo %z", // replaces nothing
+        "Hallo %z", // replaces nothing -> "Hallo %z"
         vec![8usize]
+    );
+
+    test!(
+        test_with_one_char_token_type_counts_length_of_replaced_char,
+        "abcde %%", // replaces nothing -> "abcde %"
+        vec![7usize]
     );
 
     test!(
@@ -644,7 +650,7 @@ mod tests_measure_lengths {
 
     test!(
         test_with_right_alignment_placeholder_and_shorter_returns_correct_length,
-        "Hallo %>(10)%(str4)xx",
+        "Hallo %>(10)%(str4)xx", // "Hallo       1234xx"
         vec![18usize, 10usize]
     );
 
@@ -727,6 +733,12 @@ mod tests_replace_placeholders {
         test_with_single_placeholder_alternative_value_replaces_correctly,
         "Hello %(var2)",
         "Hello welt"
+    );
+
+    test!(
+        test_with_one_char_token_type_replaces_correctly,
+        "abcde %%", // replaces nothing -> "abcde %"
+        "abcde %"
     );
 
     test!(
