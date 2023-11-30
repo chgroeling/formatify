@@ -436,6 +436,12 @@ impl PlaceholderFormatter for Formatify {
     }
 }
 
+impl Default for Formatify {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests_extract_placeholder_keys {
     use crate::*;
