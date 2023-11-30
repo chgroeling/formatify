@@ -34,7 +34,9 @@ impl ParsingTask for ParsingTaskMeasureLengths {
         context.vout[0] += 1;
     }
 
-    fn process_char_placeholder(_context: &mut ParsingContext<'_, Self::Item>, _ch: char) {}
+    fn process_char_placeholder(context: &mut ParsingContext<'_, Self::Item>, _ch: char) {
+        context.vout[0] += 1;
+    }
 
     fn process_str_placeholder(context: &mut ParsingContext<'_, Self::Item>, arg: String) {
         let Some(repl_str) = context.key_value.get(arg.as_str()) else {
@@ -48,20 +50,15 @@ impl ParsingTask for ParsingTaskMeasureLengths {
                 context.vout[0] += repl_c;
                 context.vout.push(repl_c);
             }
-            OutputFormat::LeftAlign(la) => {
-                let repl_c_max = max(repl_c, la as usize);
+            OutputFormat::LeftAlign(width) | OutputFormat::RightAlign(width) => {
+                let repl_c_max = max(repl_c, width as usize);
                 context.vout[0] += repl_c_max;
                 context.vout.push(repl_c_max);
             }
-            OutputFormat::LeftAlignTrunc(la) => {
-                let repl_c = la as usize;
+            OutputFormat::LeftAlignTrunc(width) | OutputFormat::RightAlignTrunc(width) => {
+                let repl_c = width as usize;
                 context.vout[0] += repl_c;
                 context.vout.push(repl_c);
-            }
-            OutputFormat::RightAlign(ra) => {
-                let repl_c_max = max(repl_c, ra as usize);
-                context.vout[0] += repl_c_max;
-                context.vout.push(repl_c_max);
             }
         }
     }

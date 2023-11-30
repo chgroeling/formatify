@@ -31,7 +31,10 @@
 //!    - **Right Alignment**:
 //!        - **Syntax**: `%>(width)`
 //!        - **Description**: Aligns the subsequent placeholder to the right within a field of `width` characters. The placeholder itself is not displayed.
-
+//!    - **Right Alignment with Truncation**:
+//!        - **Syntax**: `%>(width,trunc)`
+//!        - **Description**: Similar to right alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!
 //!
 //! Note: In the context of format placeholders, `width` refers to the total number of characters allocated for the value being formatted. For example, `%<(10)` aligns the value within a 10-character wide field.
 //!
@@ -58,11 +61,13 @@
 //!
 //! ## Integration and Compatibility
 //!
-//! Formatify is designed to be easily integrated into existing Rust projects and works seamlessly with standard data types and collections.
+//! Formatify is designed to be easily integrated into existing Rust projects and works seamlessly with standard data
+//! types and collections.
 //!
 //! ## Contribution and Feedback
 //!
-//! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue on the repository's issue tracker.
+//! Contributions to Formatify are welcome. For bug reports, feature requests, or general feedback, please open an issue
+//! on the repository's issue tracker.
 
 mod output_format;
 mod parsing_context;
@@ -334,7 +339,7 @@ impl Formatify {
         skip_until_neg_char_match!(context, ' '); // consume whitespaces
 
         // Check if optional arguments are available
-        /*  if consume_expected_chars!(context, ',').is_some() {
+        if consume_expected_chars!(context, ',').is_some() {
             skip_until_neg_char_match!(context, ' '); // consume whitespaces
             let Some(literal) = gather_str_placeholder!(context) else {
                 T::error(context);
@@ -345,19 +350,19 @@ impl Formatify {
             let arg: String = literal.into_iter().collect();
 
             if arg.trim() == "trunc" {
-                context.format = OutputFormat::LeftAlignTrunc(decimal);
+                context.format = OutputFormat::RightAlignTrunc(decimal);
                 return;
             }
 
             T::error(context);
-        } else {*/
-        if consume_expected_chars!(context, ')').is_none() {
-            T::error(context);
-            return;
-        }
+        } else {
+            if consume_expected_chars!(context, ')').is_none() {
+                T::error(context);
+                return;
+            }
 
-        context.format = OutputFormat::RightAlign(decimal);
-        //  }
+            context.format = OutputFormat::RightAlign(decimal);
+        }
     }
 
     fn process_placeholder<T: ParsingTask>(&self, context: &mut ParsingContext<'_, T::Item>) {
@@ -618,8 +623,14 @@ mod tests_measure_lengths {
 
     test!(
         test_with_invalid_token_type_counts_length_of_unreplaced_string,
-        "Hallo %z", // replaces nothing
+        "Hallo %z", // replaces nothing -> "Hallo %z"
         vec![8usize]
+    );
+
+    test!(
+        test_with_one_char_token_type_counts_length_of_replaced_char,
+        "abcde %%", // replaces nothing -> "abcde %"
+        vec![7usize]
     );
 
     test!(
@@ -642,7 +653,7 @@ mod tests_measure_lengths {
 
     test!(
         test_with_right_alignment_placeholder_and_shorter_returns_correct_length,
-        "Hallo %>(10)%(str4)xx",
+        "Hallo %>(10)%(str4)xx", // "Hallo       1234xx"
         vec![18usize, 10usize]
     );
 
@@ -653,9 +664,27 @@ mod tests_measure_lengths {
     );
 
     test!(
+        test_with_right_alignment_placeholder_and_exact_length_value_returns_correct_length,
+        "Hallo %>(10)%(str10)xx", // "Hallo 1234567890xx"
+        vec![18usize, 10usize]
+    );
+
+    test!(
         test_with_left_alignment_placeholder_and_longer_value_returns_correct_length,
         "Hallo %<(10)%(str14)xx", // "Hallo 1234567890ABCDxx"
         vec![22usize, 14usize]
+    );
+
+    test!(
+        test_with_right_alignment_placeholder_and_longer_value_returns_correct_length,
+        "Hallo %>(10)%(str14)xx", // "Hallo 1234567890ABCDxx"
+        vec![22usize, 14usize]
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_shorter_value_with_umlauts_returns_correct_length,
+        "Hallo %>(10,trunc)%(umlaute)xx", // "Hallo äöü       xx"
+        vec![18usize, 10usize]
     );
 
     test!(
@@ -673,6 +702,12 @@ mod tests_measure_lengths {
     test!(
         test_with_left_align_truncate_placeholder_and_longer_value_returns_correct_length,
         "Hallo %<(10,trunc)%(str14)xx", // "Hallo 123456789…xx"
+        vec![18usize, 10usize]
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_longer_value_returns_correct_length,
+        "Hallo %>(10,trunc)%(str14)xx", // "Hallo 123456789…xx"
         vec![18usize, 10usize]
     );
 }
@@ -725,6 +760,12 @@ mod tests_replace_placeholders {
         test_with_single_placeholder_alternative_value_replaces_correctly,
         "Hello %(var2)",
         "Hello welt"
+    );
+
+    test!(
+        test_with_one_char_token_type_replaces_correctly,
+        "abcde %%", // replaces nothing -> "abcde %"
+        "abcde %"
     );
 
     test!(
@@ -830,15 +871,33 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_right_align_truncate_placeholder_and_exact_length_value_keeps_it_unchanged,
+        "Hallo %>(10,trunc)%(str10)xx",
+        "Hallo 1234567890xx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_exact_length_value_with_spaces_keeps_it_unchanged,
         "Hallo %<(  10  ,  trunc   )%(str10)xx",
         "Hallo 1234567890xx"
     );
 
     test!(
+        test_with_right_align_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %>(10,trunc)%(str14)xx",
+        "Hallo 123456789…xx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_longer_value_truncates_correctly,
         "Hallo %<(10,trunc)%(str14)xx",
         "Hallo 123456789…xx"
+    );
+
+    test!(
+        test_with_right_align_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %>(10,trunc)%(umlaute)xx",
+        "Hallo        äöüxx"
     );
 
     test!(
