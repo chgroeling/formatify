@@ -31,7 +31,10 @@
 //!    - **Right Alignment**:
 //!        - **Syntax**: `%>(width)`
 //!        - **Description**: Aligns the subsequent placeholder to the right within a field of `width` characters. The placeholder itself is not displayed.
-
+//!    - **Right Alignment with Truncation**:
+//!        - **Syntax**: `%>(width,trunc)`
+//!        - **Description**: Similar to right alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!
 //!
 //! Note: In the context of format placeholders, `width` refers to the total number of characters allocated for the value being formatted. For example, `%<(10)` aligns the value within a 10-character wide field.
 //!
