@@ -16,7 +16,7 @@ Explore more in our [documentation](https://docs.rs/formatify).
 To get started with Formatify, here's a simple example:
 
 ```rust
-use formatify::{Formatify, FormatifiyFormatter};
+use formatify::{Formatify, PlaceholderFormatter};
 use std::collections::HashMap;
 
 let mut key_value_pairs = HashMap::new();
