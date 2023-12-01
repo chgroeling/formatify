@@ -59,6 +59,11 @@ impl ParsingTask for ParsingTaskMeasureLengths {
                 context.vout[0] += repl_c;
                 context.vout.push(repl_c);
             }
+            OutputFormat::RightAlignLTrunc(width) => {
+                let repl_c = width as usize;
+                context.vout[0] += repl_c;
+                context.vout.push(repl_c);
+            }
         }
     }
 

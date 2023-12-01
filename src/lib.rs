@@ -351,9 +351,16 @@ impl Formatify {
             context.iter.next(); // consume )
             let arg: String = literal.into_iter().collect();
 
-            if arg.trim() == "trunc" {
-                context.format = OutputFormat::RightAlignTrunc(decimal);
-                return;
+            match arg.trim() {
+                "trunc" => {
+                    context.format = OutputFormat::RightAlignTrunc(decimal);
+                    return;
+                }
+                "ltrunc" => {
+                    context.format = OutputFormat::RightAlignLTrunc(decimal);
+                    return;
+                }
+                _ => {}
             }
 
             T::error(context);
@@ -809,6 +816,12 @@ mod tests_replace_placeholders {
         test_with_right_align_truncate_placeholder_and_longer_value_truncates_correctly,
         "Hallo %>(10,trunc)%(str14)xx",
         "Hallo 123456789…xx"
+    );
+
+    test!(
+        test_with_right_align_left_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %>(10,ltrunc)%(str14)xx",
+        "Hallo …67890ABCDxx"
     );
 
     test!(
