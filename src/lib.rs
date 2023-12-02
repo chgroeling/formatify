@@ -28,12 +28,18 @@
 //!    - **Left Alignment with Truncation**:
 //!        - **Syntax**: `%<(width,trunc)`
 //!        - **Description**: Similar to left alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!    - **Left Alignment with left Truncation**:
+//!        - **Syntax**: `%>(width,ltrunc)`
+//!        - **Description**: Similar to left alignment, but left truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
 //!    - **Right Alignment**:
 //!        - **Syntax**: `%>(width)`
 //!        - **Description**: Aligns the subsequent placeholder to the right within a field of `width` characters. The placeholder itself is not displayed.
 //!    - **Right Alignment with Truncation**:
 //!        - **Syntax**: `%>(width,trunc)`
 //!        - **Description**: Similar to right alignment, but truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
+//!    - **Right Alignment with left Truncation**:
+//!        - **Syntax**: `%>(width,ltrunc)`
+//!        - **Description**: Similar to right alignment, but left truncates the text to fit within the specified `width`. The placeholder itself is not displayed.
 //!
 //!
 //! Note: In the context of format placeholders, `width` refers to the total number of characters allocated for the value being formatted. For example, `%<(10)` aligns the value within a 10-character wide field.
@@ -307,9 +313,16 @@ impl Formatify {
             context.iter.next(); // consume )
             let arg: String = literal.into_iter().collect();
 
-            if arg.trim() == "trunc" {
-                context.format = OutputFormat::LeftAlignTrunc(decimal);
-                return;
+            match arg.trim() {
+                "trunc" => {
+                    context.format = OutputFormat::LeftAlignTrunc(decimal);
+                    return;
+                }
+                "ltrunc" => {
+                    context.format = OutputFormat::LeftAlignLTrunc(decimal);
+                    return;
+                }
+                _ => {}
             }
 
             T::error(context);
@@ -351,9 +364,16 @@ impl Formatify {
             context.iter.next(); // consume )
             let arg: String = literal.into_iter().collect();
 
-            if arg.trim() == "trunc" {
-                context.format = OutputFormat::RightAlignTrunc(decimal);
-                return;
+            match arg.trim() {
+                "trunc" => {
+                    context.format = OutputFormat::RightAlignTrunc(decimal);
+                    return;
+                }
+                "ltrunc" => {
+                    context.format = OutputFormat::RightAlignLTrunc(decimal);
+                    return;
+                }
+                _ => {}
             }
 
             T::error(context);
@@ -812,9 +832,21 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_right_align_left_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %>(10,ltrunc)%(str14)xx",
+        "Hallo …67890ABCDxx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_longer_value_truncates_correctly,
         "Hallo %<(10,trunc)%(str14)xx",
         "Hallo 123456789…xx"
+    );
+
+    test!(
+        test_with_left_align_left_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %<(10,ltrunc)%(str14)xx",
+        "Hallo …67890ABCDxx"
     );
 
     test!(
@@ -824,8 +856,20 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_right_align_left_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %>(10,ltrunc)%(umlaute)xx",
+        "Hallo        äöüxx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
         "Hallo %<(10,trunc)%(umlaute)xx",
+        "Hallo äöü       xx"
+    );
+
+    test!(
+        test_with_left_align_left_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %<(10,ltrunc)%(umlaute)xx",
         "Hallo äöü       xx"
     );
 

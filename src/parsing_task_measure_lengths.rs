@@ -54,7 +54,10 @@ impl ParsingTask for ParsingTaskMeasureLengths {
                 context.vout[0] += repl_c_max;
                 context.vout.push(repl_c_max);
             }
-            OutputFormat::LeftAlignTrunc(width) | OutputFormat::RightAlignTrunc(width) => {
+            OutputFormat::LeftAlignTrunc(width)
+            | OutputFormat::RightAlignTrunc(width)
+            | OutputFormat::LeftAlignLTrunc(width)
+            | OutputFormat::RightAlignLTrunc(width) => {
                 let repl_c = width as usize;
                 context.vout[0] += repl_c;
                 context.vout.push(repl_c);
