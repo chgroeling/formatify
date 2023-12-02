@@ -89,6 +89,35 @@ impl ParsingTask for ParsingTaskReplacePlaceholders {
                 }
             }
 
+            OutputFormat::LeftAlignLTrunc(ra) => {
+                let value_len = repl.clone().count();
+                let len_diff = (ra as i32) - (value_len as i32);
+
+                match len_diff {
+                    _ if len_diff > 0 => {
+                        context.vout.extend(repl);
+                        for _i in 0..len_diff {
+                            context.vout.push(' ');
+                        }
+                    }
+
+                    _ if len_diff < 0 => {
+                        context.vout.push('…');
+                        let mut iter = repl.into_iter();
+                        for _ in 0..-len_diff + 1 {
+                            // +1 due to …
+                            iter.next();
+                        }
+
+                        context.vout.extend(iter);
+                    }
+                    _ => {
+                        // len_diff ==0
+                        context.vout.extend(repl);
+                    }
+                }
+            }
+
             OutputFormat::RightAlign(ra) => {
                 let value_len = repl.clone().count();
                 let len_diff = (ra as i32) - (value_len as i32);

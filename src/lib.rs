@@ -311,9 +311,16 @@ impl Formatify {
             context.iter.next(); // consume )
             let arg: String = literal.into_iter().collect();
 
-            if arg.trim() == "trunc" {
-                context.format = OutputFormat::LeftAlignTrunc(decimal);
-                return;
+            match arg.trim() {
+                "trunc" => {
+                    context.format = OutputFormat::LeftAlignTrunc(decimal);
+                    return;
+                }
+                "ltrunc" => {
+                    context.format = OutputFormat::LeftAlignLTrunc(decimal);
+                    return;
+                }
+                _ => {}
             }
 
             T::error(context);
@@ -835,14 +842,32 @@ mod tests_replace_placeholders {
     );
 
     test!(
+        test_with_left_align_left_truncate_placeholder_and_longer_value_truncates_correctly,
+        "Hallo %<(10,ltrunc)%(str14)xx",
+        "Hallo …67890ABCDxx"
+    );
+
+    test!(
         test_with_right_align_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
         "Hallo %>(10,trunc)%(umlaute)xx",
         "Hallo        äöüxx"
     );
 
     test!(
+        test_with_right_align_left_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %>(10,ltrunc)%(umlaute)xx",
+        "Hallo        äöüxx"
+    );
+
+    test!(
         test_with_left_align_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
         "Hallo %<(10,trunc)%(umlaute)xx",
+        "Hallo äöü       xx"
+    );
+
+    test!(
+        test_with_left_align_left_truncate_placeholder_and_shorter_value_with_umlauts_pads_correctly,
+        "Hallo %<(10,ltrunc)%(umlaute)xx",
         "Hallo äöü       xx"
     );
 
